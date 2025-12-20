@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.io as pio
 import numpy as np
 
 # -----------------------------------------------------------------------------
@@ -27,6 +28,18 @@ AZ_COLORS = {
     "White": "#FFFFFF"
 }
 
+# Set Plotly default template to a dark theme tailored to AZ palette
+az_template = pio.templates['plotly_dark']
+pio.templates['az_mulberry'] = az_template
+pio.templates['az_mulberry'].layout.colorway = [
+    AZ_COLORS['Mulberry'], AZ_COLORS['Lime Green'], AZ_COLORS['Light Blue'],
+    AZ_COLORS['Magenta'], AZ_COLORS['Gold'], AZ_COLORS['Navy'], AZ_COLORS['Purple']
+]
+# Make figure backgrounds transparent to blend with app background
+pio.templates['az_mulberry'].layout.paper_bgcolor = 'rgba(0,0,0,0)'
+pio.templates['az_mulberry'].layout.plot_bgcolor = 'rgba(0,0,0,0)'
+pio.templates.default = 'az_mulberry'
+
 def clean_numeric(df, cols):
     for c in cols:
         if c in df.columns:
@@ -45,130 +58,179 @@ def apply_plot_theme(fig):
     fig.update_layout(
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(color=AZ_COLORS['White']),
+        font=dict(color='#F7F3F8'),
         xaxis=dict(
-            gridcolor='rgba(255,255,255,0.08)',
-            zerolinecolor='rgba(255,255,255,0.06)',
-            linecolor='rgba(255,255,255,0.10)',
-            tickfont=dict(color=AZ_COLORS['White']),
-            titlefont=dict(color=AZ_COLORS['White'])
+            gridcolor='rgba(255,255,255,0.15)',
+            zerolinecolor='rgba(255,255,255,0.25)',
+            linecolor='rgba(255,255,255,0.30)',
+            tickfont=dict(color='#F7F3F8'),
+            titlefont=dict(color='#F7F3F8')
         ),
         yaxis=dict(
-            gridcolor='rgba(255,255,255,0.08)',
-            zerolinecolor='rgba(255,255,255,0.06)',
-            linecolor='rgba(255,255,255,0.10)',
-            tickfont=dict(color=AZ_COLORS['White']),
-            titlefont=dict(color=AZ_COLORS['White'])
+            gridcolor='rgba(255,255,255,0.15)',
+            zerolinecolor='rgba(255,255,255,0.25)',
+            linecolor='rgba(255,255,255,0.30)',
+            tickfont=dict(color='#F7F3F8'),
+            titlefont=dict(color='#F7F3F8')
         ),
-        legend=dict(bgcolor='rgba(0,0,0,0)', font=dict(color=AZ_COLORS['White']))
+        legend=dict(bgcolor='rgba(0,0,0,0)', font=dict(color='#F7F3F8'))
     )
     return fig
 
 # Custom CSS to enforce AZ Branding with Glassmorphism
 st.markdown(f"""
 <style>
-/* Mulberry Main Background */
+/* White Main Background */
 .stApp {{
-  background: linear-gradient(135deg, {AZ_COLORS['Mulberry']}, {AZ_COLORS['Purple']});
+    background: #FFFFFF;
   background-attachment: fixed;
 }}
 
-/* Main content glass: darker translucent panels */
+/* Main content glass: white with subtle border */
 [data-testid="stAppViewContainer"] > .main {{
-  background: rgba(131, 0, 81, 0.12);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border-radius: 12px;
-  color: {AZ_COLORS['White']};
+        background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 15px;
+        border: 1px solid rgba(200, 200, 200, 0.30);
 }}
 
-/* Sidebar: darker purple tint */
+/* Sidebar glass: magenta tone */
 [data-testid="stSidebar"] {{
-  background: rgba(59, 16, 83, 0.18);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(0, 0, 0, 0.18);
-  border-radius: 12px;
+        background: rgba(208, 0, 111, 0.12);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(208, 0, 111, 0.25);
+  border-radius: 15px;
 }}
-[data-testid="stSidebar"] * {{ color: {AZ_COLORS['White']} !important; }}
+[data-testid="stSidebar"] * {{ color: #1E1E1E !important; }}
 
 /* Metric cards */
 [data-testid="metric-container"] {{
-  background: rgba(0, 0, 0, 0.18);
-  border-radius: 10px;
-  padding: 14px !important;
+        background: rgba(240, 171, 0, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(240, 171, 0, 0.30);
+  border-radius: 12px;
+  padding: 20px !important;
 }}
 
-/* Metric values: lime green for contrast */
+/* Metric values: keep accent, ensure contrast */
 [data-testid="stMetricValue"] {{
-  color: {AZ_COLORS['Lime Green']};
+  color: {AZ_COLORS['Navy']};
   font-weight: bold;
+  text-shadow: none;
 }}
 
-/* Headers & text: white on dark */
-h1, h2, h3 {{
-  color: {AZ_COLORS['White']};
-  font-family: 'Arial', sans-serif;
+/* Headers: page titles (h1) in navy; subheaders in mulberry */
+h1 {{
+        color: {AZ_COLORS['Navy']} !important;
+    font-family: 'Arial', sans-serif;
 }}
+h2, h3 {{
+        color: {AZ_COLORS['Mulberry']};
+    font-family: 'Arial', sans-serif;
+}}
+/* Subheaders in Streamlit often render as h2/h3 within markdown; keep readable */
 [data-testid="stMarkdownContainer"] p {{
-  color: {AZ_COLORS['White']};
+    color: #1E1E1E;
 }}
 
-/* Expanders and dataframes: darker panels */
-[data-testid="stExpander"],
+/* Expanders and dataframes */
+[data-testid="stExpander"] {{
+      background: rgba(196, 214, 0, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(196, 214, 0, 0.30);
+  border-radius: 12px;
+}}
 [data-testid="stDataFrame"] {{
-  background: rgba(0, 0, 0, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 10px;
+      background: #FFFFFF;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(30, 30, 30, 0.12);
+  border-radius: 12px;
 }}
+/* Ensure table and expander text contrast */
+[data-testid="stDataFrame"] * {{ color: #1E1E1E !important; }}
+[data-testid="stExpander"] * {{ color: #1E1E1E !important; }}
 
-/* Buttons: subtle on dark */
+/* Buttons */
 .stButton > button {{
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  color: {AZ_COLORS['White']};
-  border-radius: 8px;
+        background: rgba(63, 68, 68, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(63, 68, 68, 0.30);
+    color: #1E1E1E;
+  border-radius: 10px;
   transition: all 0.2s ease;
 }}
 .stButton > button:hover {{
-  background: rgba(255, 255, 255, 0.10);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.20);
+        background: rgba(63, 68, 68, 0.25);
+        box-shadow: 0 4px 16px rgba(63, 68, 68, 0.20);
 }}
 
-/* Inputs: dark with white text */
+/* Inputs: radios, selects, multiselects, sliders — consistent and readable */
 .stRadio > div,
 .stMultiSelect > div > div,
 .stSelectbox > div > div,
 .stSlider > div > div,
 .stTextInput > div > div > input {{
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  color: {AZ_COLORS['White']};
-  border-radius: 6px;
+        background: rgba(0, 56, 101, 0.10);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(0, 56, 101, 0.30);
+    color: #1E1E1E;
+  border-radius: 8px;
 }}
+/* Input labels and placeholders */
+.stRadio label, .stSelectbox label, .stMultiSelect label, .stSlider label, .stTextInput label {{
+    color: #1E1E1E !important;
+}}
+input::placeholder {{ color: rgba(30,30,30,0.60); }}
+a {{ color: {AZ_COLORS['Mulberry']}; }}
 
 /* Info/warning/error boxes */
 .stInfo, .stWarning, .stError {{
-  background: rgba(0, 0, 0, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  color: {AZ_COLORS['White']};
-  border-radius: 8px;
+        background: rgba(60, 16, 83, 0.10);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(60, 16, 83, 0.25);
+  border-radius: 12px;
 }}
 
-/* Global text */
+/* Global text: high-contrast */
 body {{
-  color: {AZ_COLORS['White']};
+    color: #1E1E1E;
 }}
 
 /* Tabs */
 .stTabs [data-baseweb="tab-list"] button {{
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
+        background: rgba(131, 0, 81, 0.12);
+  border-radius: 10px;
 }}
 .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {{
   font-size: 1.1rem;
   font-weight: 600;
-  color: {AZ_COLORS['White']};
+    color: #1E1E1E;
+}}
+/* Download button styling */
+.stDownloadButton > button {{
+                background: rgba(63, 68, 68, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(63, 68, 68, 0.30);
+        color: #1E1E1E;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}}
+.stDownloadButton > button:hover {{
+                background: rgba(63, 68, 68, 0.25);
+                box-shadow: 0 4px 16px rgba(63, 68, 68, 0.20);
+}}
+/* Remove any white background from Plotly chart containers */
+[data-testid="stPlotlyChart"] {{
+    background: transparent !important;
 }}
 </style>
 """, unsafe_allow_html=True)
@@ -263,9 +325,7 @@ if df_master is not None and len(df_master) > 0:
 
         master_range = f"{df_master['Pstng Date'].min().date()} to {df_master['Pstng Date'].max().date()}"
         forecast_range = f"{df_forecast['Week_Ending'].min().date()} to {df_forecast['Week_Ending'].max().date()}"
-        st.caption(
-            f"Connected • Master: {len(df_master)} records ({master_range}) • Forecast: {len(df_forecast)} records ({forecast_range})"
-        )
+        # Removed connection summary caption for cleaner UI
         
         # Key Metrics Row - Connected to Excel files
         col1, col2, col3, col4 = st.columns(4)
@@ -308,7 +368,7 @@ if df_master is not None and len(df_master) > 0:
             y=hist_balance['Ending_Balance_USD'],
             mode='lines',
             name='Historical Balance',
-            line=dict(color=AZ_COLORS['Mulberry'], width=3)
+            line=dict(color=AZ_COLORS['Lime Green'], width=3)
         ))
         
         # Forecast Line from AZ_6Month_Forecast.csv
@@ -322,6 +382,7 @@ if df_master is not None and len(df_master) > 0:
         
         # Critical Threshold Line (Zero)
         fig.add_hline(y=0, line_dash="dot", annotation_text="Liquidity Failure (0)", annotation_position="bottom right", line_color="red")
+        fig.update_annotations(font_color="#1E1E1E")
 
         # Keep x-axis only within dates that exist in the datasets
         valid_hist_dates = hist_balance['Pstng Date'].dropna()
@@ -336,7 +397,17 @@ if df_master is not None and len(df_master) > 0:
         fig.update_layout(
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
-            font=dict(color=AZ_COLORS['Graphite']),
+            font=dict(color='#1E1E1E'),
+            xaxis=dict(
+                gridcolor='rgba(30,30,30,0.20)',
+                zerolinecolor='rgba(30,30,30,0.30)',
+                linecolor='rgba(30,30,30,0.35)'
+            ),
+            yaxis=dict(
+                gridcolor='rgba(30,30,30,0.20)',
+                zerolinecolor='rgba(30,30,30,0.30)',
+                linecolor='rgba(30,30,30,0.35)'
+            ),
             height=500,
             hovermode="x unified"
         )
@@ -376,7 +447,7 @@ if df_master is not None and len(df_master) > 0:
                 color_continuous_scale=[AZ_COLORS['Magenta'], AZ_COLORS['Lime Green']],
                 title="Cash Balance by Entity"
             )
-            fig_bar.update_layout(plot_bgcolor='rgba(0,0,0,0)')
+            fig_bar.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font=dict(color='#1E1E1E'))
             st.plotly_chart(fig_bar, use_container_width=True)
         else:
             # Line chart for single entity over time
@@ -386,6 +457,22 @@ if df_master is not None and len(df_master) > 0:
                 y='Ending_Balance_USD',
                 title=f"Cash Saturation History: {selected_entity}",
                 color_discrete_sequence=[AZ_COLORS['Navy']]
+            )
+            fig_line.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#1E1E1E'),
+                title=dict(font=dict(color=AZ_COLORS['Navy'])),
+                xaxis=dict(
+                    gridcolor='rgba(30,30,30,0.20)',
+                    zerolinecolor='rgba(30,30,30,0.30)',
+                    linecolor='rgba(30,30,30,0.35)'
+                ),
+                yaxis=dict(
+                    gridcolor='rgba(30,30,30,0.20)',
+                    zerolinecolor='rgba(30,30,30,0.30)',
+                    linecolor='rgba(30,30,30,0.35)'
+                )
             )
             st.plotly_chart(fig_line, use_container_width=True)
 
@@ -485,7 +572,7 @@ if df_master is not None and len(df_master) > 0:
                     x=hist_weekly['Pstng Date'],
                     y=hist_weekly['Running_Bal'],
                     mode='lines',
-                    line=dict(color=AZ_COLORS.get('Navy', '#003865'), width=2),
+                    line=dict(color=AZ_COLORS.get('Gold', '#F0AB00'), width=2),
                     name='Historical Balance'
                 ))
                 x_dates.append(hist_weekly['Pstng Date'])
@@ -494,7 +581,7 @@ if df_master is not None and len(df_master) > 0:
                 x=forecast_view['Week_Ending'],
                 y=forecast_view['Projected_Ending_Balance_USD'],
                 mode='lines+markers',
-                line=dict(color=AZ_COLORS.get('Mulberry', '#830051'), width=3),
+                line=dict(color=AZ_COLORS.get('Light Blue', '#68D2DF'), width=3),
                 name='ARIMA Forecast'
             ))
             x_dates.append(forecast_view['Week_Ending'])
@@ -504,25 +591,25 @@ if df_master is not None and len(df_master) > 0:
 
         else:
             # Forecast Only with Confidence Intervals
-            # Use the currently selected forecast_view (will be 4 rows for 1-month selection)
-            df_selected = forecast_view.copy()
-
             fig_cast.add_trace(go.Scatter(
-                x=df_selected['Week_Ending'], y=df_selected.get('Balance_Upper_Bound', df_selected.get('Forecast_Upper_Bound')),
-                mode='lines', line=dict(width=2, color='red', dash='dash'), showlegend=False, hoverinfo='skip'
+                x=forecast_view['Week_Ending'], y=forecast_view['Balance_Upper_Bound'],
+                mode='lines', line=dict(width=0), showlegend=False, hoverinfo='skip'
             ))
             fig_cast.add_trace(go.Scatter(
-                x=df_selected['Week_Ending'], y=df_selected.get('Balance_Lower_Bound', df_selected.get('Forecast_Lower_Bound')),
-                mode='lines', line=dict(width=2, color='red', dash='dash'), fill='tonexty',
+                x=forecast_view['Week_Ending'], y=forecast_view['Balance_Lower_Bound'],
+                mode='lines', line=dict(width=0), fill='tonexty',
                 fillcolor='rgba(104, 210, 223, 0.2)', name='95% Confidence Interval'
             ))
             fig_cast.add_trace(go.Scatter(
-                x=df_selected['Week_Ending'], y=df_selected['Projected_Ending_Balance_USD'],
-                mode='lines+markers+text', line=dict(color=AZ_COLORS.get('Mulberry', '#830051'), width=4),
-                name='Projected Balance', text=[f'${v:,.0f}' for v in df_selected['Projected_Ending_Balance_USD']],
-                textposition='top center', textfont=dict(color=AZ_COLORS.get('Mulberry', '#830051'), size=9)
+                x=forecast_view['Week_Ending'], y=forecast_view['Projected_Ending_Balance_USD'],
+                mode='lines+markers+text', line=dict(color=AZ_COLORS.get('Mulberry', '#830051'), width=3),
+                name='Projected Balance',
+                textposition='top center',
+                texttemplate='$%{y:,.0f}',
+                textfont=dict(color='#1E1E1E'),
+                cliponaxis=False
             ))
-            x_dates.append(df_selected['Week_Ending'])
+            x_dates.append(forecast_view['Week_Ending'])
 
         # Limit x-axis to dates that actually exist in the datasets shown
         if x_dates:
@@ -534,21 +621,55 @@ if df_master is not None and len(df_master) > 0:
             yaxis_title="USD",
             xaxis_title="Timeline",
             hovermode="x unified",
-            yaxis=dict(autorange=True, tickformat="$,.0f")
+            yaxis=dict(autorange=True, tickformat="$,.0f"),
+            font=dict(color='#1E1E1E'),
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            xaxis=dict(
+                gridcolor='rgba(30,30,30,0.20)',
+                zerolinecolor='rgba(30,30,30,0.30)',
+                linecolor='rgba(30,30,30,0.35)'
+            ),
+            yaxis_showgrid=True
         )
         st.plotly_chart(fig_cast, use_container_width=True)
 
         # --- STEP 7: TABLES ---
         with st.expander("📊 View Data Details"):
-            st.dataframe(
-                forecast_view[['Week_Ending', 'Forecasted_Net_Cash_Flow_USD', 'Projected_Ending_Balance_USD', 'Alert_Level']].rename(columns={
-                    'Week_Ending': 'Date',
-                    'Forecasted_Net_Cash_Flow_USD': 'Net Flow',
-                    'Projected_Ending_Balance_USD': 'Projected Balance',
-                    'Alert_Level': 'Status'
-                }),
-                use_container_width=True, hide_index=True
+            df_table = forecast_view[[
+                'Week_Ending', 'Forecasted_Net_Cash_Flow_USD', 'Projected_Ending_Balance_USD', 'Alert_Level'
+            ]].rename(columns={
+                'Week_Ending': 'Date',
+                'Forecasted_Net_Cash_Flow_USD': 'Net Flow',
+                'Projected_Ending_Balance_USD': 'Projected Balance',
+                'Alert_Level': 'Status'
+            })
+
+            styled_table = (
+                df_table.style
+                .set_properties(**{
+                    'background-color': 'rgba(131,0,81,0.10)',
+                    'color': '#1E1E1E'
+                })
+                .set_table_styles([
+                    {
+                        'selector': 'th',
+                        'props': [
+                            ('background-color', 'rgba(131,0,81,0.15)'),
+                            ('color', '#1E1E1E')
+                        ]
+                    },
+                    {
+                        'selector': 'td',
+                        'props': [
+                            ('background-color', 'rgba(131,0,81,0.10)'),
+                            ('color', '#1E1E1E')
+                        ]
+                    }
+                ])
             )
+
+            st.dataframe(styled_table, use_container_width=True, hide_index=True)
           # -------------------------------------------------------------------------
     # PAGE 4: PROCESS ANOMALIES - Connected to AZ_Anomaly_Report.csv
     # -------------------------------------------------------------------------
@@ -561,7 +682,6 @@ if df_master is not None and len(df_master) > 0:
             st.stop()
 
         anomaly_range = f"{df_anomaly['Pstng Date'].min().date()} to {df_anomaly['Pstng Date'].max().date()}" if not df_anomaly.empty else "N/A"
-        st.caption(f"Connected to AZ_Anomaly_Report.csv • {len(df_anomaly)} records • Dates: {anomaly_range}")
         
         col1, col2 = st.columns([1, 3])
         
@@ -612,16 +732,24 @@ if df_master is not None and len(df_master) > 0:
                                    marker=dict(color=color_map.get(cat)))
                     )
                 fig_anom.update_layout(
-                    title="Anomaly Severity Map",
-                    xaxis_title="Pstng Date",
-                    yaxis_title="Amount in USD"
-                )
+                        title="Anomaly Severity Map",
+                        xaxis_title="Pstng Date",
+                        yaxis_title="Amount in USD",
+                        font=dict(color='#F7F3F8')
+                    )
 
-            fig_anom.update_layout(plot_bgcolor='rgba(0,0,0,0)', height=500, legend_traceorder="normal")
+            # Improve marker contrast
+            for tr in fig_anom.data:
+                if hasattr(tr, 'marker'):
+                    tr.marker.update(line=dict(color='#1E1E1E', width=0.5))
+            fig_anom.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=500, legend_traceorder="normal", font=dict(color='#1E1E1E'))
             st.plotly_chart(fig_anom, use_container_width=True, key="anomaly_chart")
 
         st.markdown("### 📋 Actionable List for Finance Ops")
-        st.caption(f"**Showing Categories:** {', '.join(selected_cats)}")
+        st.markdown(
+            f"<div style='color:#1E1E1E; font-size:1.0rem; font-weight:600;'>Showing Categories: {', '.join(selected_cats)}</div>",
+            unsafe_allow_html=True
+        )
 
         if len(filtered_anomalies) > 0:
             report_df = filtered_anomalies[['DocumentNo', 'Pstng Date', 'Name', 'Category', 'Amount in USD', 'Z_Score', 'Deviation_Pct']].copy()
@@ -673,5 +801,5 @@ if df_master is not None and len(df_master) > 0:
     # FOOTER
     # -------------------------------------------------------------------------
 st.markdown("---")
-st.markdown(f"<div style='text-align: center; color: {AZ_COLORS['Graphite']}'>AZ Liquidity Control Center • AstraZeneca Datathon 2025</div>", unsafe_allow_html=True)
+st.markdown(f"<div style='text-align: center; color: #1E1E1E'>AZ Liquidity Control Center • AstraZeneca Datathon 2025</div>", unsafe_allow_html=True)
 

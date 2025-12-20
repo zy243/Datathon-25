@@ -45,141 +45,130 @@ def apply_plot_theme(fig):
     fig.update_layout(
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(color=AZ_COLORS['Graphite']),
+        font=dict(color=AZ_COLORS['White']),
         xaxis=dict(
-            gridcolor='rgba(63,68,68,0.15)',
-            zerolinecolor='rgba(63,68,68,0.25)',
-            linecolor='rgba(63,68,68,0.30)',
-            tickfont=dict(color=AZ_COLORS['Graphite']),
-            titlefont=dict(color=AZ_COLORS['Graphite'])
+            gridcolor='rgba(255,255,255,0.08)',
+            zerolinecolor='rgba(255,255,255,0.06)',
+            linecolor='rgba(255,255,255,0.10)',
+            tickfont=dict(color=AZ_COLORS['White']),
+            titlefont=dict(color=AZ_COLORS['White'])
         ),
         yaxis=dict(
-            gridcolor='rgba(63,68,68,0.15)',
-            zerolinecolor='rgba(63,68,68,0.25)',
-            linecolor='rgba(63,68,68,0.30)',
-            tickfont=dict(color=AZ_COLORS['Graphite']),
-            titlefont=dict(color=AZ_COLORS['Graphite'])
+            gridcolor='rgba(255,255,255,0.08)',
+            zerolinecolor='rgba(255,255,255,0.06)',
+            linecolor='rgba(255,255,255,0.10)',
+            tickfont=dict(color=AZ_COLORS['White']),
+            titlefont=dict(color=AZ_COLORS['White'])
         ),
-        legend=dict(bgcolor='rgba(0,0,0,0)', font=dict(color=AZ_COLORS['Graphite']))
+        legend=dict(bgcolor='rgba(0,0,0,0)', font=dict(color=AZ_COLORS['White']))
     )
     return fig
 
 # Custom CSS to enforce AZ Branding with Glassmorphism
 st.markdown(f"""
 <style>
-/* Lighter Main Background with soft AZ blues */
+/* Mulberry Main Background */
 .stApp {{
-  background: linear-gradient(135deg, #a9cbe8, #d8ecff, #f5fbff);
+  background: linear-gradient(135deg, {AZ_COLORS['Mulberry']}, {AZ_COLORS['Purple']});
   background-attachment: fixed;
 }}
 
-/* Main content glass: slightly more opaque for readability */
+/* Main content glass: darker translucent panels */
 [data-testid="stAppViewContainer"] > .main {{
-  background: rgba(255, 255, 255, 0.20);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 15px;
+  background: rgba(131, 0, 81, 0.12);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 12px;
+  color: {AZ_COLORS['White']};
 }}
 
-/* Sidebar glass: harmonized and lighter */
+/* Sidebar: darker purple tint */
 [data-testid="stSidebar"] {{
-  background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border: 1px solid rgba(63, 68, 68, 0.15);
-  border-radius: 15px;
+  background: rgba(59, 16, 83, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 12px;
 }}
-[data-testid="stSidebar"] * {{ color: {AZ_COLORS['Graphite']} !important; }}
+[data-testid="stSidebar"] * {{ color: {AZ_COLORS['White']} !important; }}
 
 /* Metric cards */
 [data-testid="metric-container"] {{
-  background: rgba(255, 255, 255, 0.22);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(63, 68, 68, 0.12);
-  border-radius: 12px;
-  padding: 20px !important;
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 10px;
+  padding: 14px !important;
 }}
 
-/* Metric values: keep accent, ensure contrast */
+/* Metric values: lime green for contrast */
 [data-testid="stMetricValue"] {{
   color: {AZ_COLORS['Lime Green']};
   font-weight: bold;
-  text-shadow: none;
 }}
 
-/* Headers: keep accent, darken base text for contrast */
+/* Headers & text: white on dark */
 h1, h2, h3 {{
-  color: {AZ_COLORS['Navy']};
+  color: {AZ_COLORS['White']};
   font-family: 'Arial', sans-serif;
 }}
-/* Subheaders in Streamlit often render as h2/h3 within markdown; keep readable */
 [data-testid="stMarkdownContainer"] p {{
-  color: {AZ_COLORS['Graphite']};
+  color: {AZ_COLORS['White']};
 }}
 
-/* Expanders and dataframes */
+/* Expanders and dataframes: darker panels */
 [data-testid="stExpander"],
 [data-testid="stDataFrame"] {{
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(63, 68, 68, 0.12);
-  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
 }}
 
-/* Buttons */
+/* Buttons: subtle on dark */
 .stButton > button {{
-  background: rgba(255, 255, 255, 0.30);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(63, 68, 68, 0.15);
-  color: {AZ_COLORS['Graphite']};
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: {AZ_COLORS['White']};
+  border-radius: 8px;
   transition: all 0.2s ease;
 }}
 .stButton > button:hover {{
-  background: rgba(255, 255, 255, 0.42);
-  box-shadow: 0 4px 16px rgba(63, 68, 68, 0.12);
+  background: rgba(255, 255, 255, 0.10);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.20);
 }}
 
-/* Inputs: radios, selects, multiselects, sliders — consistent and readable */
+/* Inputs: dark with white text */
 .stRadio > div,
 .stMultiSelect > div > div,
 .stSelectbox > div > div,
 .stSlider > div > div,
 .stTextInput > div > div > input {{
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(63, 68, 68, 0.15);
-  color: {AZ_COLORS['Graphite']};
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  color: {AZ_COLORS['White']};
+  border-radius: 6px;
 }}
 
 /* Info/warning/error boxes */
 .stInfo, .stWarning, .stError {{
-  background: rgba(255, 255, 255, 0.20);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(63, 68, 68, 0.15);
-  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  color: {AZ_COLORS['White']};
+  border-radius: 8px;
 }}
 
-/* Global text: high-contrast */
+/* Global text */
 body {{
-  color: {AZ_COLORS['Graphite']};
+  color: {AZ_COLORS['White']};
 }}
 
 /* Tabs */
 .stTabs [data-baseweb="tab-list"] button {{
-  background: rgba(255, 255, 255, 0.18);
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
 }}
 .stTabs [data-baseweb="tab-list"] button [data-testid="stMarkdownContainer"] p {{
   font-size: 1.1rem;
   font-weight: 600;
-  color: {AZ_COLORS['Graphite']};
+  color: {AZ_COLORS['White']};
 }}
 </style>
 """, unsafe_allow_html=True)
@@ -515,21 +504,25 @@ if df_master is not None and len(df_master) > 0:
 
         else:
             # Forecast Only with Confidence Intervals
+            # Use the currently selected forecast_view (will be 4 rows for 1-month selection)
+            df_selected = forecast_view.copy()
+
             fig_cast.add_trace(go.Scatter(
-                x=forecast_view['Week_Ending'], y=forecast_view['Balance_Upper_Bound'],
-                mode='lines', line=dict(width=0), showlegend=False, hoverinfo='skip'
+                x=df_selected['Week_Ending'], y=df_selected.get('Balance_Upper_Bound', df_selected.get('Forecast_Upper_Bound')),
+                mode='lines', line=dict(width=2, color='red', dash='dash'), showlegend=False, hoverinfo='skip'
             ))
             fig_cast.add_trace(go.Scatter(
-                x=forecast_view['Week_Ending'], y=forecast_view['Balance_Lower_Bound'],
-                mode='lines', line=dict(width=0), fill='tonexty',
+                x=df_selected['Week_Ending'], y=df_selected.get('Balance_Lower_Bound', df_selected.get('Forecast_Lower_Bound')),
+                mode='lines', line=dict(width=2, color='red', dash='dash'), fill='tonexty',
                 fillcolor='rgba(104, 210, 223, 0.2)', name='95% Confidence Interval'
             ))
             fig_cast.add_trace(go.Scatter(
-                x=forecast_view['Week_Ending'], y=forecast_view['Projected_Ending_Balance_USD'],
-                mode='lines+markers', line=dict(color=AZ_COLORS.get('Mulberry', '#830051'), width=3),
-                name='Projected Balance'
+                x=df_selected['Week_Ending'], y=df_selected['Projected_Ending_Balance_USD'],
+                mode='lines+markers+text', line=dict(color=AZ_COLORS.get('Mulberry', '#830051'), width=4),
+                name='Projected Balance', text=[f'${v:,.0f}' for v in df_selected['Projected_Ending_Balance_USD']],
+                textposition='top center', textfont=dict(color=AZ_COLORS.get('Mulberry', '#830051'), size=9)
             ))
-            x_dates.append(forecast_view['Week_Ending'])
+            x_dates.append(df_selected['Week_Ending'])
 
         # Limit x-axis to dates that actually exist in the datasets shown
         if x_dates:

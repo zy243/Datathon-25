@@ -26,7 +26,8 @@ A small Streamlit app for exploring Arizona time-series forecasting and anomaly 
 
 3. Run the Streamlit app:
 
-	streamlit run app.py
+	streamlit run app.py / python3 -m streamlit run app.py
+
 
 The app will open in your browser at the address printed by Streamlit (usually http://localhost:8501).
 
